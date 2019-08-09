@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'semantic-ui-react';
 
 function UserCard(props) {
-  return(   
+  return (   
     <Card className="user-card">
       <Card.Content>
         <Card.Header className="card-name">{ props.user.name } </Card.Header>

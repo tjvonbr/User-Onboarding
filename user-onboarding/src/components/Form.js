@@ -6,13 +6,13 @@ import * as Yup from 'yup';
 
 const UserForm = ({ errors, touched, values, status }) => {
   const [users, setUsers] = useState([]);
-  const [value, setValue] = useState({ name: "", email: "", password: "" });
+  const [value, setValue] = useState({ name: "", email: "", password: "", terms: false });
   console.log(users);
 
   useEffect(() => {
     if (status) {
       setUsers([...users, status]);
-      setValue({ name: "", email: "", password: "" })
+      setValue({ name: "", email: "", password: "", terms: false })
     }
   }, [status]);
 
@@ -40,9 +40,13 @@ const UserForm = ({ errors, touched, values, status }) => {
               I have read and agreed to the Terms of Service
               <Field
                 type="checkbox"
-                name="termsOfService"
-                checked={values.termsOfService}
+                name="terms"
+                checked={values.terms}
               />
+                {touched.terms && errors.terms && (
+                  <p className="error">*{ errors.terms }</p>
+                )}
+              
               <span className="checkmark" />
             </label>
           <button className="btn submit-btn" type="submit">Submit</button>
@@ -60,12 +64,12 @@ const UserForm = ({ errors, touched, values, status }) => {
 }
 
 const FormikUserForm = withFormik({
-  mapPropsToValues({ name, email, password, termsOfService }) {
+  mapPropsToValues({ name, email, password, terms }) {
     return {
       name: name || '',
       email: email || '',
       password: password || '',
-      termsOfService: termsOfService || false
+      terms: terms || false
     }
   },
 
@@ -76,7 +80,9 @@ const FormikUserForm = withFormik({
       .required('Email is a required field'),
     password: Yup.string()
       .required('Password is a required field')
-      .min(8, 'Please make sure your password contains at least 8 characters.')
+      .min(8, 'Please make sure your password contains at least 8 characters.'),
+    terms: Yup.bool()
+      .oneOf([true], 'You must accept the Terms of Service to successfully register.') 
   }),
 
   handleSubmit(values, { setStatus, setValue }) {
